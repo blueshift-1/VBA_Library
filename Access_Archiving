@@ -1,0 +1,54 @@
+' Archiving in Access
+' This allows for the bulk historical data to be stored in an archived state, where as the
+' current working data to be a smaller, more efficient state.
+
+'''''''''''''''''''''''''''''''''''''''''
+' The archival needs to be generalized! '
+'''''''''''''''''''''''''''''''''''''''''
+
+' Controls archive
+Sub archiveEventLog()
+    ' Inserts
+    Call Step1_Insert
+    ' Removes duplicates
+    Call Step2_Delete
+End Sub
+
+'
+Private Sub Step1_Insert()
+
+    ' Inserts un-needed items into archive
+    Dim insertSQL As String
+    insertSQL = "INSERT INTO eventLog_archive " & _
+                 "SELECT * FROM eventLog " & _
+                 "WHERE NOT EXISTS (SELECT * FROM Display_ScheduleOutput " & _
+                 "WHERE Display_ScheduleOutput.ID = eventLog.ID);"
+    Call safeSQL(insertSQL, "Archiving eventLog - Insertion section")
+    
+End Sub
+Private Sub Step2_Delete()
+
+    ' Deletes out duplicates
+    Dim deletesql As String
+    deletesql = "DELETE FROM eventLog " & _
+                 "WHERE NOT EXISTS (SELECT * FROM Display_ScheduleOutput " & _
+                 "WHERE Display_ScheduleOutput.ID = eventLog.ID);"
+    Call safeSQL(deletesql, "Arvhiving eventLog - Deletion Section")
+    
+End Sub
+
+' This subroutine doesn't actually archive, but rather should be used to bring in data
+' from a Linked Table to a local table. This is important for Backend Databases so table
+' open/locking issues don't occur
+' As with the archival, it is assumed that tables with the name <original>_Local are alread
+' created and have the right fields/properties.
+Sub localizeTable(tableName As String)
+    Dim deleteCmd As String
+    Dim updateCmd As String
+    
+    deleteCmd = "DELETE * FROM " & tableName & "_Local;"
+    updateCmd = "INSERT INTO " & tableName & "_Local SELECT * FROM " & tableName & ";"
+    
+    DoCmd.RunSQL deleteCmd
+    DoCmd.RunSQL updateCmd
+End Sub
