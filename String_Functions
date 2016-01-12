@@ -24,6 +24,16 @@ Public Function CellConcatenate(Rng As Range) As String
     For Each c In Rng.Cells
         str = str & c.Value
     Next
-    
+
     CellConcatenate = str
+End Function
+
+' A funny little function that makes words past tense in english
+' This is great for dealing with dynamic messages to a user.
+Function pastTense(wrd As String) As String
+    If Right(wrd, 1) = "e" Then
+        pastTense = wrd & "d"
+    Else
+        pastTense = wrd & "ed"
+    End If
 End Function
