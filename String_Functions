@@ -1,0 +1,29 @@
+' String Functions
+' Basic string manipulation and conversion functions
+
+' Converts Date and Time to String
+Public Function convertDate2Str(Optional ByVal datetime As String = "n/a") As String
+    If datetime = "n/a" Then
+        getDateTimeStr = Format(Date, "yyyy-mm-dd") & "_" & Format(Time, "hhmm") & ".xlsx"
+    Else
+        datetime = Replace(datetime, ":", " ")
+        datetime = Replace(datetime, "/", " ")
+        
+        Dim dt As Variant
+        dt = Split(datetime, " ")
+        
+        getDateTimeStr = dt(2) & "-" & len2(dt(0)) & "-" & len2(dt(1)) & "_" & militaryConv(dt(3), dt(6)) & dt(4)
+    End If
+End Function
+
+' Concatenates an entire range (normal excel Concatenate only accept text values, not ranges)
+' EXCEL ONLY
+Public Function CellConcatenate(Rng As Range) As String
+    
+    Dim str As String
+    For Each c In Rng.Cells
+        str = str & c.Value
+    Next
+    
+    CellConcatenate = str
+End Function
