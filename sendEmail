@@ -1,0 +1,38 @@
+Sub sendEmail(ByVal name As String, ByVal email As String, ByVal subject As String, ByVal body As String, Optional ByVal link As String = "", Optional ByVal linkName As String = "")
+'For Tips see: http://www.rondebruin.nl/win/winmail/Outlook/tips.htm
+'Working in Office 2000-2013
+    Dim OutApp As Object
+    Dim OutMail As Object
+    Dim strbody As String
+
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+
+    If linkName = "" Then linkName = link
+    
+    ' Converts breaks and hyperlinkes with the needed text
+    body = Replace(body, "*break*", "</br><br>")
+    If link <> "" Then
+        body = Replace(body, link, "<A href=""" & link & """>" & linkName & "</A>")
+    End If
+    
+    ' Some basic formatting
+    strbody = "<font face=""arial""><p>" & Split(name, " ")(0) & ", </p> <br> " & body & "</br></font>"
+    
+    On Error Resume Next
+    With OutMail
+        .To = email
+        .CC = ""
+        .BCC = ""
+        .subject = subject
+        .htmlbody = strbody
+        
+         .send ' Sends email (choose 1)
+        '.display 'Displays email (choose 1)
+    
+    End With
+    On Error GoTo 0
+
+    Set OutMail = Nothing
+    Set OutApp = Nothing
+End Sub
