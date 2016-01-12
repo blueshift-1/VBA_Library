@@ -1,0 +1,15 @@
+Function patternReplace(str As String, Optional pattern As String = "") As String
+    
+    Dim regex As New RegExp
+    With regex
+        .pattern = pattern
+        .Global = True
+    End With
+    
+    If regex.Test(str) = True Then
+        getRegex = regex.Replace(str, "")
+    Else
+        getRegex = str
+    End If
+    
+End Function
